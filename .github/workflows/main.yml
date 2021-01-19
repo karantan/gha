@@ -1,10 +1,17 @@
 name: Do Something That Needs Scheduled
 
 on:
+  workflow_dispatch:
+    inputs:
+      server:
+        description: Name of server.
+        required: true
+      fail_if_ssh_active:
+        description: Fail the job and cancel the rebuild if someone is SSHed into the server ATM
+        required: false
+        default: true
   repository_dispatch:
     types: do-something
-  schedule:
-    - cron:  '*/5 * * * *'
 
 jobs:
   build:
@@ -17,3 +24,6 @@ jobs:
 
       - name: Do Something Based On Triggered Event Data
         run: 'echo "Triggered event text: ${{ github.event.client_payload.text }}"'
+      
+      - name: Workflow Dispatched
+        run: echo ${{ github.event.inputs.server }} ${{ github.event.inputs.fail_if_ssh_active }}
